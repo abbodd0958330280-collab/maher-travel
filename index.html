@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maher Travel - Private Transportation Booking</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">🚗</span>
+                <span class="logo-text">Maher Travel</span>
+            </div>
+            <div class="nav-links">
+                <button class="nav-btn active" onclick="showTab('booking')">Book Ride</button>
+                <button class="nav-btn" onclick="showTab('status')">Check Status</button>
+                <button class="nav-btn" onclick="showTab('staff')">Staff</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Booking Tab -->
+        <section id="booking" class="tab-content active">
+            <div class="page-header">
+                <h1>Book Your Ride</h1>
+                <p>Fast, reliable private transportation</p>
+            </div>
+
+            <form id="bookingForm" class="booking-form">
+                <div class="form-section">
+                    <h2>Travel Details</h2>
+                    
+                    <div class="form-group">
+                        <label for="pickup">Pickup Location *</label>
+                        <input type="text" id="pickup" name="pickup" placeholder="Enter pickup address" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="destination">Destination *</label>
+                        <input type="text" id="destination" name="destination" placeholder="Enter destination address" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">Travel Date *</label>
+                            <input type="date" id="date" name="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="time">Travel Time *</label>
+                            <input type="time" id="time" name="time" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="passengers">Number of Passengers *</label>
+                        <select id="passengers" name="passengers" required>
+                            <option value="">Select number of passengers</option>
+                            <option value="1">1 Passenger</option>
+                            <option value="2">2 Passengers</option>
+                            <option value="3">3 Passengers</option>
+                            <option value="4">4 Passengers</option>
+                            <option value="5">5 Passengers</option>
+                            <option value="6">6 Passengers</option>
+                            <option value="7">7+ Passengers</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Your Information</h2>
+                    
+                    <div class="form-group">
+                        <label for="name">Full Name *</label>
+                        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number *</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Special Requests (Optional)</label>
+                        <textarea id="notes" name="notes" placeholder="Any special requests or notes for the driver..." rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-large">Book Ride</button>
+                    <button type="reset" class="btn btn-secondary btn-large">Clear</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Booking Status Tab -->
+        <section id="status" class="tab-content">
+            <div class="page-header">
+                <h1>Check Your Booking</h1>
+                <p>Enter your booking reference to view status</p>
+            </div>
+
+            <div class="status-search">
+                <div class="search-container">
+                    <input type="text" id="referenceSearch" placeholder="Enter booking reference (e.g., MH-20240815-001)" class="search-input">
+                    <button onclick="searchBooking()" class="btn btn-primary">Search</button>
+                </div>
+            </div>
+
+            <div id="statusResult" class="status-result" style="display: none;">
+                <div class="booking-card">
+                    <div class="booking-header">
+                        <h3>Booking Details</h3>
+                        <div id="statusBadge" class="status-badge"></div>
+                    </div>
+                    <div class="booking-info">
+                        <div class="info-row">
+                            <span class="label">Reference:</span>
+                            <span id="statusRef" class="value"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Pickup:</span>
+                            <span id="statusPickup" class="value"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Destination:</span>
+                            <span id="statusDest" class="value"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Date & Time:</span>
+                            <span id="statusDateTime" class="value"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Passengers:</span>
+                            <span id="statusPass" class="value"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Name:</span>
+                            <span id="statusName" class="value"></span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Phone:</span>
+                            <span id="statusPhone" class="value"></span>
+                        </div>
+                        <div id="statusNotesRow" class="info-row" style="display: none;">
+                            <span class="label">Notes:</span>
+                            <span id="statusNotes" class="value"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Staff Dashboard Tab -->
+        <section id="staff" class="tab-content">
+            <div class="staff-header">
+                <div>
+                    <h1>Staff Dashboard</h1>
+                    <p>Manage bookings and update status</p>
+                </div>
+                <div class="staff-stats">
+                    <div class="stat-box">
+                        <span class="stat-count" id="statNew">0</span>
+                        <span class="stat-label">New</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-count" id="statConfirmed">0</span>
+                        <span class="stat-label">Confirmed</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-count" id="statRejected">0</span>
+                        <span class="stat-label">Rejected</span>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-count" id="statCancelled">0</span>
+                        <span class="stat-label">Cancelled</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="staff-filters">
+                <button class="filter-btn active" onclick="filterBookings('all')">All Bookings</button>
+                <button class="filter-btn" onclick="filterBookings('New')">New</button>
+                <button class="filter-btn" onclick="filterBookings('Confirmed')">Confirmed</button>
+                <button class="filter-btn" onclick="filterBookings('Rejected')">Rejected</button>
+                <button class="filter-btn" onclick="filterBookings('Cancelled')">Cancelled</button>
+                <button class="filter-btn" onclick="exportBookings()">📥 Export CSV</button>
+            </div>
+
+            <div id="staffBookings" class="bookings-list">
+                <div class="empty-state">
+                    <p>No bookings yet</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal for Success Message -->
+    <div id="successModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✓ Booking Confirmed!</h2>
+            </div>
+            <div class="modal-body">
+                <p class="confirmation-message">Your booking has been successfully submitted.</p>
+                <div class="reference-box">
+                    <p class="small-label">Your Booking Reference:</p>
+                    <p class="reference-number" id="referenceNumber"></p>
+                    <button class="btn-copy" onclick="copyReference()">Copy Reference</button>
+                </div>
+                <p class="small-text">You can use this reference to check your booking status anytime.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal()">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Staff Password Modal -->
+    <div id="staffModal" class="modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Staff Access</h2>
+            </div>
+            <div class="modal-body">
+                <p>Enter password to access staff dashboard:</p>
+                <input type="password" id="staffPassword" placeholder="Enter password" class="search-input">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeStaffModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="verifyStaffPassword()">Unlock</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
