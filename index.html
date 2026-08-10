@@ -3,57 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maher Travel - ماهر للسفر والنقل</title>
+    <meta name="theme-color" content="#07111f">
+    <title>Maher Travel | ماهر ترافل</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<!-- خلفية فخمة -->
+<div class="luxury-bg"></div>
+<div class="bg-overlay"></div>
+<!-- Navigation -->
 <nav class="navbar">
     <div class="nav-container">
         <div class="logo">
-            <span class="logo-icon">🚐</span>
-            <span class="logo-text">Maher Travel</span>
+            <span class="logo-icon">✦</span>
+            <div>
+                <span class="logo-text">MAHER</span>
+                <span class="logo-sub">TRAVEL</span>
+            </div>
         </div>
         <div class="nav-links">
             <button class="nav-btn active" onclick="showTab('booking')">
-                📝 احجز رحلتك
+                احجز رحلتك
             </button>
             <button class="nav-btn" onclick="showTab('status')">
-                🔎 تتبع الحجز
+                تتبع الحجز
+            </button>
+            <button class="nav-btn" onclick="showTab('staff')">
+                الموظفين
             </button>
         </div>
     </div>
 </nav>
-<div class="container">
+<!-- Main -->
+<main class="container">
+    <!-- HERO -->
+    <section class="hero-section">
+        <div class="hero-badge">
+            ✦ خدمة نقل خاصة بمستوى VIP
+        </div>
+        <h1>
+            رحلتك تبدأ من هنا
+            <span>بأناقة وراحة</span>
+        </h1>
+        <p class="hero-description">
+            استمتع بخدمة نقل خاصة وآمنة، من باب منزلك إلى وجهتك،
+            مع Maher Travel.
+        </p>
+        <div class="hero-buttons">
+            <button class="hero-btn" onclick="showTab('booking')">
+                احجز رحلتك الآن
+                <span>←</span>
+            </button>
+            <button class="outline-btn" onclick="showTab('status')">
+                تتبع حجزي
+            </button>
+        </div>
+        <div class="hero-features">
+            <div class="feature">
+                <span>🚘</span>
+                <div>
+                    <strong>نقل خاص</strong>
+                    <small>راحة وخصوصية</small>
+                </div>
+            </div>
+            <div class="feature">
+                <span>🏠</span>
+                <div>
+                    <strong>من الباب للباب</strong>
+                    <small>نستلمك من موقعك</small>
+                </div>
+            </div>
+            <div class="feature">
+                <span>🛡️</span>
+                <div>
+                    <strong>أمان وموثوقية</strong>
+                    <small>خدمة احترافية</small>
+                </div>
+            </div>
+        </div>
+    </section>
     <!-- BOOKING -->
     <section id="booking" class="tab-content active">
         <div class="page-header">
-            <h1>احجز رحلتك 🚐</h1>
-            <p>نقل خاص مريح وآمن من باب منزلك إلى وجهتك</p>
+            <span class="section-label">MAHER TRAVEL</span>
+            <h2>احجز رحلتك</h2>
+            <p>أدخل تفاصيل رحلتك وسنتولى الباقي</p>
         </div>
         <form id="bookingForm" class="booking-form">
             <div class="form-section">
-                <h2>📍 تفاصيل الرحلة</h2>
+                <h3>📍 تفاصيل الرحلة</h3>
                 <div class="form-group">
-                    <label for="pickup">مكان الانطلاق *</label>
+                    <label for="pickup">مكان الانطلاق</label>
                     <input
                         type="text"
                         id="pickup"
                         name="pickup"
-                        placeholder="أدخل مكان الانطلاق"
+                        placeholder="أين تريد أن نستلمك؟"
                         required>
                 </div>
                 <div class="form-group">
-                    <label for="destination">الوجهة *</label>
+                    <label for="destination">الوجهة</label>
                     <input
                         type="text"
                         id="destination"
                         name="destination"
-                        placeholder="أدخل الوجهة"
+                        placeholder="إلى أين تريد الذهاب؟"
                         required>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="date">تاريخ الرحلة *</label>
+                        <label for="date">تاريخ الرحلة</label>
                         <input
                             type="date"
                             id="date"
@@ -61,7 +120,7 @@
                             required>
                     </div>
                     <div class="form-group">
-                        <label for="time">وقت الانطلاق *</label>
+                        <label for="time">وقت الرحلة</label>
                         <input
                             type="time"
                             id="time"
@@ -70,7 +129,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="passengers">عدد الركاب *</label>
+                    <label for="passengers">عدد الركاب</label>
                     <select id="passengers" name="passengers" required>
                         <option value="">اختر عدد الركاب</option>
                         <option value="1">راكب واحد</option>
@@ -84,9 +143,9 @@
                 </div>
             </div>
             <div class="form-section">
-                <h2>👤 معلوماتك</h2>
+                <h3>👤 معلوماتك</h3>
                 <div class="form-group">
-                    <label for="name">الاسم الكامل *</label>
+                    <label for="name">الاسم الكامل</label>
                     <input
                         type="text"
                         id="name"
@@ -95,12 +154,12 @@
                         required>
                 </div>
                 <div class="form-group">
-                    <label for="phone">رقم الهاتف *</label>
+                    <label for="phone">رقم الهاتف</label>
                     <input
                         type="tel"
                         id="phone"
                         name="phone"
-                        placeholder="أدخل رقم هاتفك"
+                        placeholder="مثال: 09xxxxxxxx"
                         required>
                 </div>
                 <div class="form-group">
@@ -108,15 +167,15 @@
                     <textarea
                         id="notes"
                         name="notes"
-                        placeholder="اكتب أي ملاحظات أو طلبات خاصة..."
-                        rows="3"></textarea>
+                        rows="4"
+                        placeholder="أي طلبات أو ملاحظات خاصة؟"></textarea>
                 </div>
             </div>
             <div class="form-actions">
                 <button
                     type="submit"
                     class="btn btn-primary btn-large">
-                    🚐 إرسال طلب الحجز
+                    تأكيد الحجز ✦
                 </button>
                 <button
                     type="reset"
@@ -129,7 +188,8 @@
     <!-- STATUS -->
     <section id="status" class="tab-content">
         <div class="page-header">
-            <h1>🔎 تتبع حجزك</h1>
+            <span class="section-label">TRACKING</span>
+            <h2>تتبع حجزك</h2>
             <p>
                 أدخل رقم الحجز لمعرفة حالة رحلتك
             </p>
@@ -162,45 +222,113 @@
                 </div>
                 <div class="booking-info">
                     <div class="info-row">
-                        <span class="label">رقم الحجز:</span>
+                        <span class="label">رقم الحجز</span>
                         <span id="statusRef" class="value"></span>
                     </div>
                     <div class="info-row">
-                        <span class="label">مكان الانطلاق:</span>
+                        <span class="label">الانطلاق</span>
                         <span id="statusPickup" class="value"></span>
                     </div>
                     <div class="info-row">
-                        <span class="label">الوجهة:</span>
+                        <span class="label">الوجهة</span>
                         <span id="statusDest" class="value"></span>
                     </div>
                     <div class="info-row">
-                        <span class="label">التاريخ والوقت:</span>
+                        <span class="label">التاريخ والوقت</span>
                         <span id="statusDateTime" class="value"></span>
                     </div>
                     <div class="info-row">
-                        <span class="label">عدد الركاب:</span>
+                        <span class="label">الركاب</span>
                         <span id="statusPass" class="value"></span>
                     </div>
                     <div class="info-row">
-                        <span class="label">الاسم:</span>
+                        <span class="label">الاسم</span>
                         <span id="statusName" class="value"></span>
                     </div>
                     <div class="info-row">
-                        <span class="label">رقم الهاتف:</span>
+                        <span class="label">الهاتف</span>
                         <span id="statusPhone" class="value"></span>
                     </div>
                     <div
                         id="statusNotesRow"
                         class="info-row"
                         style="display:none;">
-                        <span class="label">الملاحظات:</span>
-                        <span id="statusNotes" class="value"></span>
+                        <span class="label">ملاحظات</span>
+                        <span
+                            id="statusNotes"
+                            class="value">
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
     </section>
-</div>
+    <!-- STAFF -->
+    <section id="staff" class="tab-content">
+        <div class="staff-header">
+            <div>
+                <span class="section-label">MANAGEMENT</span>
+                <h2>لوحة الموظفين</h2>
+                <p>إدارة ومتابعة جميع الحجوزات</p>
+            </div>
+            <div class="staff-stats">
+                <div class="stat-box">
+                    <span id="statNew" class="stat-count">0</span>
+                    <span class="stat-label">جديد</span>
+                </div>
+                <div class="stat-box">
+                    <span id="statConfirmed" class="stat-count">0</span>
+                    <span class="stat-label">مؤكد</span>
+                </div>
+                <div class="stat-box">
+                    <span id="statRejected" class="stat-count">0</span>
+                    <span class="stat-label">مرفوض</span>
+                </div>
+                <div class="stat-box">
+                    <span id="statCancelled" class="stat-count">0</span>
+                    <span class="stat-label">ملغي</span>
+                </div>
+            </div>
+        </div>
+        <div class="staff-filters">
+            <button
+                class="filter-btn active"
+                onclick="filterBookings('all')">
+                كل الحجوزات
+            </button>
+            <button
+                class="filter-btn"
+                onclick="filterBookings('New')">
+                جديد
+            </button>
+            <button
+                class="filter-btn"
+                onclick="filterBookings('Confirmed')">
+                مؤكد
+            </button>
+            <button
+                class="filter-btn"
+                onclick="filterBookings('Rejected')">
+                مرفوض
+            </button>
+            <button
+                class="filter-btn"
+                onclick="filterBookings('Cancelled')">
+                ملغي
+            </button>
+            <button
+                class="filter-btn"
+                onclick="exportBookings()">
+                📥 تصدير
+            </button>
+        </div>
+        <div id="staffBookings" class="bookings-list">
+            <div class="empty-state">
+                <p>لا توجد حجوزات حالياً</p>
+            </div>
+        </div>
+    </section>
+</main>
 <!-- SUCCESS MODAL -->
 <div
     id="successModal"
@@ -208,19 +336,19 @@
     style="display:none;">
     <div class="modal-content">
         <div class="modal-header">
-            <h2>✓ تم إرسال طلب الحجز!</h2>
+            <h2>✓ تم إرسال الحجز بنجاح</h2>
         </div>
         <div class="modal-body">
             <p class="confirmation-message">
-                تم إرسال طلب رحلتك بنجاح.
+                تم استلام طلب رحلتك بنجاح.
             </p>
             <div class="reference-box">
                 <p class="small-label">
-                    رقم الحجز الخاص بك:
+                    رقم الحجز الخاص بك
                 </p>
                 <p
-                    class="reference-number"
-                    id="referenceNumber">
+                    id="referenceNumber"
+                    class="reference-number">
                 </p>
                 <button
                     class="btn-copy"
@@ -229,7 +357,7 @@
                 </button>
             </div>
             <p class="small-text">
-                احتفظ برقم الحجز لتتمكن من متابعة حالة رحلتك.
+                احتفظ برقم الحجز لاستخدامه في تتبع رحلتك.
             </p>
         </div>
         <div class="modal-footer">
@@ -241,6 +369,51 @@
         </div>
     </div>
 </div>
+<!-- STAFF LOGIN -->
+<div
+    id="staffModal"
+    class="modal"
+    style="display:none;">
+    <div class="modal-content modal-small">
+        <div class="modal-header">
+            <h2>🔐 دخول الموظفين</h2>
+        </div>
+        <div class="modal-body">
+            <p>
+                أدخل كلمة المرور للوصول إلى لوحة الإدارة
+            </p>
+            <input
+                type="password"
+                id="staffPassword"
+                placeholder="كلمة المرور"
+                class="search-input">
+        </div>
+        <div class="modal-footer">
+            <button
+                class="btn btn-secondary"
+                onclick="closeStaffModal()">
+                إلغاء
+            </button>
+            <button
+                class="btn btn-primary"
+                onclick="verifyStaffPassword()">
+                دخول
+            </button>
+        </div>
+    </div>
+</div>
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-logo">
+        ✦ MAHER TRAVEL
+    </div>
+    <p>
+        نقل خاص • راحة • أمان • موثوقية
+    </p>
+    <small>
+        © 2026 Maher Travel. جميع الحقوق محفوظة.
+    </small>
+</footer>
 <script src="app.js"></script>
 </body>
 </html>
