@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maher Travel | إدارة الحجوزات</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="luxury-bg"></div>
+<div class="bg-overlay"></div>
+<nav class="navbar">
+<div class="nav-container">
+    <div class="logo">
+        <div class="logo-icon">✦</div>
+        <div>
+            <span class="logo-text">MAHER</span>
+            <span class="logo-sub">TRAVEL</span>
+        </div>
+    </div>
+</div>
+</nav>
+<main class="container">
+<div class="page-header">
+    <span class="section-label">
+        MAHER TRAVEL
+    </span>
+    <h2>
+        حجوزاتك
+    </h2>
+    <p>
+        أهلاً ماهر 👋
+    </p>
+</div>
+<div class="staff-stats">
+    <div class="stat-box">
+        <span id="total" class="stat-count">0</span>
+        <span class="stat-label">كل الحجوزات</span>
+    </div>
+    <div class="stat-box">
+        <span id="new" class="stat-count">0</span>
+        <span class="stat-label">جديدة</span>
+    </div>
+    <div class="stat-box">
+        <span id="confirmed" class="stat-count">0</span>
+        <span class="stat-label">مؤكدة</span>
+    </div>
+    <div class="stat-box">
+        <span id="cancelled" class="stat-count">0</span>
+        <span class="stat-label">ملغاة</span>
+    </div>
+</div>
+<div
+    id="bookings"
+    class="bookings-list"
+    style="margin-top:25px;">
+</div>
+</main>
+<footer class="footer">
+<div class="footer-logo">
+    MAHER TRAVEL
+</div>
+<p>
+    لوحة الحجوزات الخاصة بماهر
+</p>
+</footer>
+<script>
+const bookings =
+    JSON.parse(
+        localStorage.getItem("maherTravelBookings")
+    ) || [];
+document.getElementById("total").textContent =
+    bookings.length;
+document.getElementById("new").textContent =
+    bookings.filter(b => b.status === "new").length;
+document.getElementById("confirmed").textContent =
+    bookings.filter(b => b.status === "confirmed").length;
+document.getElementById("cancelled").textContent =
+    bookings.filter(b => b.status === "cancelled").length;
+const container =
+    document.getElementById("bookings");
+if (bookings.length === 0) {
+    container.innerHTML = `
+        <div class="empty-state">
+            📭
+            <br><br>
+            ما في حجوزات حالياً.
+        </div>
+    `;
+} else {
+    bookings
+        .slice()
+        .reverse()
+        .forEach(booking => {
+            const card =
+                document.createElement("div");
+            card.className = "booking-row";
+            card.innerHTML = `
+                <div class="booking-row-header">
+                    <div>
+                        <div class="booking-ref">
+                            ${booking.id}
+                        </div>
+                        <small>
+                            ${booking.name}
+                        </small>
+                    </div>
+                    <span class="status-badge ${booking.status}">
+                        ${
+                            booking.status === "confirmed"
+                            ? "مؤكد"
+                            : booking.status === "cancelled"
+                            ? "ملغى"
+                            : "جديد"
+                        }
+                    </span>
+                </div>
+                <div class="booking-row-details">
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            الهاتف
+                        </span>
+                        <span class="detail-value">
+                            ${booking.phone}
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            الرحلة
+                        </span>
+                        <span class="detail-value">
+                            ${booking.pickup}
+                            →
+                            ${booking.destination}
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            التاريخ
+                        </span>
+                        <span class="detail-value">
+                            ${booking.date}
+                        </span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">
+                            الوقت
+                        </span>
+                        <span class="detail-value">
+                            ${booking.time}
+                        </span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+}
+</script>
+</body>
+</html>
