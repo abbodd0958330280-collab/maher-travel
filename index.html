@@ -1,419 +1,358 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#07111f">
-    <title>Maher Travel | ماهر ترافل</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-<!-- خلفية فخمة -->
-<div class="luxury-bg"></div>
-<div class="bg-overlay"></div>
-<!-- Navigation -->
-<nav class="navbar">
-    <div class="nav-container">
-        <div class="logo">
-            <span class="logo-icon">✦</span>
-            <div>
-                <span class="logo-text">MAHER</span>
-                <span class="logo-sub">TRAVEL</span>
-            </div>
+/* =========================================
+MAHER TRAVEL
+Main Application Script
+========================================= */
+
+const STORAGE_KEY = “maherTravelBookings”;
+
+/* —————————————–
+Helpers
+—————————————– */
+
+function getBookings() {
+try {
+return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+} catch (error) {
+console.error(“Could not read bookings:”, error);
+return [];
+}
+}
+
+function saveBookings(bookings) {
+localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
+}
+
+function generateReference() {
+const random = Math.floor(100000 + Math.random() * 900000);
+return MH-${random};
+}
+
+function showTab(tabId) {
+document.querySelectorAll(”.tab-content”).forEach(section => {
+section.classList.remove(“active”);
+});
+
+const selected = document.getElementById(tabId);
+if (selected) {
+    selected.classList.add("active");
+}
+document.querySelectorAll(".nav-btn").forEach(button => {
+    button.classList.remove("active");
+    if (button.dataset.tab === tabId) {
+        button.classList.add("active");
+    }
+});
+window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+});
+
+}
+
+/* —————————————–
+Navigation
+—————————————– */
+
+document.addEventListener(“DOMContentLoaded”, () => {
+
+document.querySelectorAll(".nav-btn").forEach(button => {
+    button.addEventListener("click", () => {
+        showTab(button.dataset.tab);
+    });
+});
+setupBookingForm();
+setMinimumDate();
+
+});
+
+/* —————————————–
+Minimum booking date
+—————————————– */
+
+function setMinimumDate() {
+
+const dateInput = document.getElementById("travelDate");
+if (!dateInput) return;
+const today = new Date();
+const year = today.getFullYear();
+const month = String(today.getMonth() + 1).padStart(2, "0");
+const day = String(today.getDate()).padStart(2, "0");
+dateInput.min = `${year}-${month}-${day}`;
+
+}
+
+/* —————————————–
+Booking Form
+—————————————– */
+
+function setupBookingForm() {
+
+const form = document.getElementById("bookingForm");
+if (!form) return;
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+    const booking = {
+        id: generateReference(),
+        name:
+            document.getElementById("customerName").value.trim(),
+        phone:
+            document.getElementById("customerPhone").value.trim(),
+        pickup:
+            document.getElementById("pickup").value.trim(),
+        destination:
+            document.getElementById("destination").value.trim(),
+        date:
+            document.getElementById("travelDate").value,
+        time:
+            document.getElementById("travelTime").value,
+        passengers:
+            document.getElementById("passengers").value,
+        vehicle:
+            document.getElementById("vehicle").value,
+        notes:
+            document.getElementById("notes").value.trim(),
+        status: "new",
+        createdAt:
+            new Date().toISOString()
+    };
+    /* Validate */
+    if (
+        !booking.name ||
+        !booking.phone ||
+        !booking.pickup ||
+        !booking.destination ||
+        !booking.date ||
+        !booking.time ||
+        !booking.passengers ||
+        !booking.vehicle
+    ) {
+        alert("يرجى تعبئة جميع الحقول المطلوبة.");
+        return;
+    }
+    /* Save */
+    const bookings = getBookings();
+    bookings.push(booking);
+    saveBookings(bookings);
+    /* Show confirmation */
+    const referenceElement =
+        document.getElementById("referenceNumber");
+    if (referenceElement) {
+        referenceElement.textContent = booking.id;
+    }
+    const modal =
+        document.getElementById("confirmationModal");
+    if (modal) {
+        modal.style.display = "flex";
+    }
+    form.reset();
+});
+
+}
+
+/* —————————————–
+Track Booking
+—————————————– */
+
+function trackBooking() {
+
+const input =
+    document.getElementById("trackingNumber");
+const result =
+    document.getElementById("statusResult");
+if (!input || !result) return;
+const reference =
+    input.value.trim().toUpperCase();
+if (!reference) {
+    result.innerHTML = `
+        <div class="empty-state">
+            ⚠️
+            <br><br>
+            أدخل رقم الحجز أولاً.
         </div>
-        <div class="nav-links">
-            <button class="nav-btn active" onclick="showTab('booking')">
-                احجز رحلتك
-            </button>
-            <button class="nav-btn" onclick="showTab('status')">
-                تتبع الحجز
-            </button>
-            <button class="nav-btn" onclick="showTab('staff')">
-                الموظفين
-            </button>
+    `;
+    return;
+}
+const bookings = getBookings();
+const booking =
+    bookings.find(item => item.id === reference);
+if (!booking) {
+    result.innerHTML = `
+        <div class="empty-state">
+            ❌
+            <br><br>
+            لم يتم العثور على هذا الحجز.
+            <br>
+            تأكد من رقم الحجز وحاول مرة أخرى.
+        </div>
+    `;
+    return;
+}
+const statusText = {
+    new: "طلب جديد",
+    confirmed: "تم تأكيد الحجز",
+    rejected: "تم رفض الحجز",
+    cancelled: "تم إلغاء الحجز"
+};
+const statusClass =
+    booking.status || "new";
+result.innerHTML = `
+    <div class="booking-card">
+        <div class="booking-header">
+            <h3>
+                ${escapeHTML(booking.id)}
+            </h3>
+            <span class="status-badge ${statusClass}">
+                ${statusText[statusClass] || "قيد المراجعة"}
+            </span>
+        </div>
+        <div class="booking-info">
+            <div class="info-row">
+                <span class="label">
+                    المسافر
+                </span>
+                <span class="value">
+                    ${escapeHTML(booking.name)}
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="label">
+                    من
+                </span>
+                <span class="value">
+                    ${escapeHTML(booking.pickup)}
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="label">
+                    إلى
+                </span>
+                <span class="value">
+                    ${escapeHTML(booking.destination)}
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="label">
+                    التاريخ
+                </span>
+                <span class="value">
+                    ${escapeHTML(booking.date)}
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="label">
+                    الوقت
+                </span>
+                <span class="value">
+                    ${escapeHTML(booking.time)}
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="label">
+                    عدد الركاب
+                </span>
+                <span class="value">
+                    ${escapeHTML(booking.passengers)}
+                </span>
+            </div>
         </div>
     </div>
-</nav>
-<!-- Main -->
-<main class="container">
-    <!-- HERO -->
-    <section class="hero-section">
-        <div class="hero-badge">
-            ✦ خدمة نقل خاصة بمستوى VIP
-        </div>
-        <h1>
-            رحلتك تبدأ من هنا
-            <span>بأناقة وراحة</span>
-        </h1>
-        <p class="hero-description">
-            استمتع بخدمة نقل خاصة وآمنة، من باب منزلك إلى وجهتك،
-            مع Maher Travel.
-        </p>
-        <div class="hero-buttons">
-            <button class="hero-btn" onclick="showTab('booking')">
-                احجز رحلتك الآن
-                <span>←</span>
-            </button>
-            <button class="outline-btn" onclick="showTab('status')">
-                تتبع حجزي
-            </button>
-        </div>
-        <div class="hero-features">
-            <div class="feature">
-                <span>🚘</span>
-                <div>
-                    <strong>نقل خاص</strong>
-                    <small>راحة وخصوصية</small>
-                </div>
-            </div>
-            <div class="feature">
-                <span>🏠</span>
-                <div>
-                    <strong>من الباب للباب</strong>
-                    <small>نستلمك من موقعك</small>
-                </div>
-            </div>
-            <div class="feature">
-                <span>🛡️</span>
-                <div>
-                    <strong>أمان وموثوقية</strong>
-                    <small>خدمة احترافية</small>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- BOOKING -->
-    <section id="booking" class="tab-content active">
-        <div class="page-header">
-            <span class="section-label">MAHER TRAVEL</span>
-            <h2>احجز رحلتك</h2>
-            <p>أدخل تفاصيل رحلتك وسنتولى الباقي</p>
-        </div>
-        <form id="bookingForm" class="booking-form">
-            <div class="form-section">
-                <h3>📍 تفاصيل الرحلة</h3>
-                <div class="form-group">
-                    <label for="pickup">مكان الانطلاق</label>
-                    <input
-                        type="text"
-                        id="pickup"
-                        name="pickup"
-                        placeholder="أين تريد أن نستلمك؟"
-                        required>
-                </div>
-                <div class="form-group">
-                    <label for="destination">الوجهة</label>
-                    <input
-                        type="text"
-                        id="destination"
-                        name="destination"
-                        placeholder="إلى أين تريد الذهاب؟"
-                        required>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="date">تاريخ الرحلة</label>
-                        <input
-                            type="date"
-                            id="date"
-                            name="date"
-                            required>
-                    </div>
-                    <div class="form-group">
-                        <label for="time">وقت الرحلة</label>
-                        <input
-                            type="time"
-                            id="time"
-                            name="time"
-                            required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="passengers">عدد الركاب</label>
-                    <select id="passengers" name="passengers" required>
-                        <option value="">اختر عدد الركاب</option>
-                        <option value="1">راكب واحد</option>
-                        <option value="2">راكبان</option>
-                        <option value="3">3 ركاب</option>
-                        <option value="4">4 ركاب</option>
-                        <option value="5">5 ركاب</option>
-                        <option value="6">6 ركاب</option>
-                        <option value="7">7 ركاب أو أكثر</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-section">
-                <h3>👤 معلوماتك</h3>
-                <div class="form-group">
-                    <label for="name">الاسم الكامل</label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        placeholder="أدخل اسمك الكامل"
-                        required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">رقم الهاتف</label>
-                    <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        placeholder="مثال: 09xxxxxxxx"
-                        required>
-                </div>
-                <div class="form-group">
-                    <label for="notes">ملاحظات إضافية</label>
-                    <textarea
-                        id="notes"
-                        name="notes"
-                        rows="4"
-                        placeholder="أي طلبات أو ملاحظات خاصة؟"></textarea>
-                </div>
-            </div>
-            <div class="form-actions">
-                <button
-                    type="submit"
-                    class="btn btn-primary btn-large">
-                    تأكيد الحجز ✦
-                </button>
-                <button
-                    type="reset"
-                    class="btn btn-secondary btn-large">
-                    مسح
-                </button>
-            </div>
-        </form>
-    </section>
-    <!-- STATUS -->
-    <section id="status" class="tab-content">
-        <div class="page-header">
-            <span class="section-label">TRACKING</span>
-            <h2>تتبع حجزك</h2>
-            <p>
-                أدخل رقم الحجز لمعرفة حالة رحلتك
-            </p>
-        </div>
-        <div class="status-search">
-            <div class="search-container">
-                <input
-                    type="text"
-                    id="referenceSearch"
-                    placeholder="مثال: MH-20260810-001"
-                    class="search-input">
-                <button
-                    onclick="searchBooking()"
-                    class="btn btn-primary">
-                    بحث
-                </button>
-            </div>
-        </div>
-        <div
-            id="statusResult"
-            class="status-result"
-            style="display:none;">
-            <div class="booking-card">
-                <div class="booking-header">
-                    <h3>تفاصيل الحجز</h3>
-                    <div
-                        id="statusBadge"
-                        class="status-badge">
-                    </div>
-                </div>
-                <div class="booking-info">
-                    <div class="info-row">
-                        <span class="label">رقم الحجز</span>
-                        <span id="statusRef" class="value"></span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">الانطلاق</span>
-                        <span id="statusPickup" class="value"></span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">الوجهة</span>
-                        <span id="statusDest" class="value"></span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">التاريخ والوقت</span>
-                        <span id="statusDateTime" class="value"></span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">الركاب</span>
-                        <span id="statusPass" class="value"></span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">الاسم</span>
-                        <span id="statusName" class="value"></span>
-                    </div>
-                    <div class="info-row">
-                        <span class="label">الهاتف</span>
-                        <span id="statusPhone" class="value"></span>
-                    </div>
-                    <div
-                        id="statusNotesRow"
-                        class="info-row"
-                        style="display:none;">
-                        <span class="label">ملاحظات</span>
-                        <span
-                            id="statusNotes"
-                            class="value">
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- STAFF -->
-    <section id="staff" class="tab-content">
-        <div class="staff-header">
-            <div>
-                <span class="section-label">MANAGEMENT</span>
-                <h2>لوحة الموظفين</h2>
-                <p>إدارة ومتابعة جميع الحجوزات</p>
-            </div>
-            <div class="staff-stats">
-                <div class="stat-box">
-                    <span id="statNew" class="stat-count">0</span>
-                    <span class="stat-label">جديد</span>
-                </div>
-                <div class="stat-box">
-                    <span id="statConfirmed" class="stat-count">0</span>
-                    <span class="stat-label">مؤكد</span>
-                </div>
-                <div class="stat-box">
-                    <span id="statRejected" class="stat-count">0</span>
-                    <span class="stat-label">مرفوض</span>
-                </div>
-                <div class="stat-box">
-                    <span id="statCancelled" class="stat-count">0</span>
-                    <span class="stat-label">ملغي</span>
-                </div>
-            </div>
-        </div>
-        <div class="staff-filters">
-            <button
-                class="filter-btn active"
-                onclick="filterBookings('all')">
-                كل الحجوزات
-            </button>
-            <button
-                class="filter-btn"
-                onclick="filterBookings('New')">
-                جديد
-            </button>
-            <button
-                class="filter-btn"
-                onclick="filterBookings('Confirmed')">
-                مؤكد
-            </button>
-            <button
-                class="filter-btn"
-                onclick="filterBookings('Rejected')">
-                مرفوض
-            </button>
-            <button
-                class="filter-btn"
-                onclick="filterBookings('Cancelled')">
-                ملغي
-            </button>
-            <button
-                class="filter-btn"
-                onclick="exportBookings()">
-                📥 تصدير
-            </button>
-        </div>
-        <div id="staffBookings" class="bookings-list">
-            <div class="empty-state">
-                <p>لا توجد حجوزات حالياً</p>
-            </div>
-        </div>
-    </section>
-</main>
-<!-- SUCCESS MODAL -->
-<div
-    id="successModal"
-    class="modal"
-    style="display:none;">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h2>✓ تم إرسال الحجز بنجاح</h2>
-        </div>
-        <div class="modal-body">
-            <p class="confirmation-message">
-                تم استلام طلب رحلتك بنجاح.
-            </p>
-            <div class="reference-box">
-                <p class="small-label">
-                    رقم الحجز الخاص بك
-                </p>
-                <p
-                    id="referenceNumber"
-                    class="reference-number">
-                </p>
-                <button
-                    class="btn-copy"
-                    onclick="copyReference()">
-                    نسخ رقم الحجز
-                </button>
-            </div>
-            <p class="small-text">
-                احتفظ برقم الحجز لاستخدامه في تتبع رحلتك.
-            </p>
-        </div>
-        <div class="modal-footer">
-            <button
-                class="btn btn-primary"
-                onclick="closeModal()">
-                تم
-            </button>
-        </div>
-    </div>
-</div>
-<!-- STAFF LOGIN -->
-<div
-    id="staffModal"
-    class="modal"
-    style="display:none;">
-    <div class="modal-content modal-small">
-        <div class="modal-header">
-            <h2>🔐 دخول الموظفين</h2>
-        </div>
-        <div class="modal-body">
-            <p>
-                أدخل كلمة المرور للوصول إلى لوحة الإدارة
-            </p>
-            <input
-                type="password"
-                id="staffPassword"
-                placeholder="كلمة المرور"
-                class="search-input">
-        </div>
-        <div class="modal-footer">
-            <button
-                class="btn btn-secondary"
-                onclick="closeStaffModal()">
-                إلغاء
-            </button>
-            <button
-                class="btn btn-primary"
-                onclick="verifyStaffPassword()">
-                دخول
-            </button>
-        </div>
-    </div>
-</div>
-<!-- Footer -->
-<footer class="footer">
-    <div class="footer-logo">
-        ✦ MAHER TRAVEL
-    </div>
-    <p>
-        نقل خاص • راحة • أمان • موثوقية
-    </p>
-    <small>
-        © 2026 Maher Travel. جميع الحقوق محفوظة.
-    </small>
-</footer>
-<script src="app.js"></script>
-</body>
-</html>
+`;
+
+}
+
+/* —————————————–
+Modal
+—————————————– */
+
+function closeModal() {
+
+const modal =
+    document.getElementById("confirmationModal");
+if (modal) {
+    modal.style.display = "none";
+}
+showTab("tracking");
+
+}
+
+function copyReference() {
+
+const reference =
+    document.getElementById("referenceNumber");
+if (!reference) return;
+const text =
+    reference.textContent.trim();
+if (navigator.clipboard) {
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            alert("تم نسخ رقم الحجز.");
+        })
+        .catch(() => {
+            fallbackCopy(text);
+        });
+} else {
+    fallbackCopy(text);
+}
+
+}
+
+function fallbackCopy(text) {
+
+const textarea =
+    document.createElement("textarea");
+textarea.value = text;
+document.body.appendChild(textarea);
+textarea.select();
+try {
+    document.execCommand("copy");
+    alert("تم نسخ رقم الحجز.");
+} catch (error) {
+    alert(`رقم الحجز: ${text}`);
+}
+textarea.remove();
+
+}
+
+/* —————————————–
+Security helper
+—————————————– */
+
+function escapeHTML(value) {
+
+if (value === null || value === undefined) {
+    return "";
+}
+return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
+
+/* —————————————–
+Close modal when clicking outside
+—————————————– */
+
+window.addEventListener(“click”, function(event) {
+
+const modal =
+    document.getElementById("confirmationModal");
+if (
+    modal &&
+    event.target === modal
+) {
+    modal.style.display = "none";
+}
+
+});
+
+/* —————————————–
+Expose functions
+—————————————– */
+
+window.showTab = showTab;
+window.trackBooking = trackBooking;
+window.closeModal = closeModal;
+window.copyReference = copyReference;
